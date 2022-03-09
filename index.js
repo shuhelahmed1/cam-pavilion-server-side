@@ -16,11 +16,12 @@ async function run() {
     const database = client.db("cam-pavilion");
     const productsCollection = database.collection("products");
     const reviewCollection = database.collection("review");
+    const ordersCollection = database.collection("orders");
 
     // post api for products
     app.post('/products', async(req,res)=>{
       const newProduct = req.body;
-      const result = productsCollection.insertOne(newProduct);
+      const result = await productsCollection.insertOne(newProduct);
       res.send(result)
     })
 
@@ -43,13 +44,28 @@ async function run() {
     // post api for review
     app.post('/review', async(req,res)=>{
       const newReview= req.body;
-      const result = reviewCollection.insertOne(newReview);
+      const result = await reviewCollection.insertOne(newReview);
       res.send(result)
     })
 
      // get api for review
      app.get('/review', async(req,res)=>{
       const cursor = reviewCollection.find({});
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
+    // post api for orders
+    app.post('/orders', async(req,res)=>{
+      const newOrder= req.body;
+      const result = await ordersCollection.insertOne(newOrder);
+      res.send(result)
+      console.log('order placed')
+    })
+
+    // get api for orders
+    app.get('/orders', async(req,res)=>{
+      const cursor = ordersCollection.find({});
       const result = await cursor.toArray();
       res.send(result)
     })
