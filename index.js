@@ -7,6 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { response } = require('express');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oesrn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -17,6 +18,9 @@ async function run() {
     const productsCollection = database.collection("products");
     const reviewCollection = database.collection("review");
     const ordersCollection = database.collection("orders");
+    const usersCollection = database.collection("users");
+     
+                    //  PRODUCT API'S
 
     // post api for products
     app.post('/products', async(req,res)=>{
@@ -41,6 +45,8 @@ async function run() {
       res.send(result)
     })
 
+                                  // REVIEW API'S
+
     // post api for review
     app.post('/review', async(req,res)=>{
       const newReview= req.body;
@@ -54,6 +60,8 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+
+                               // ORDER API'S
 
     // post api for orders
     app.post('/orders', async(req,res)=>{
@@ -83,6 +91,17 @@ async function run() {
       console.log(result)
       res.json(result)
     })
+
+                              // USERS API'S
+
+    // post api for users
+    app.post('/users', async(req,res)=>{
+      const user = req.body;
+      const result = await usersCollection.insertOne(user)
+      res.json(result)
+      console.log(result)
+    })
+
   } finally {
     // await client.close();
   }
