@@ -120,6 +120,18 @@ async function run() {
       res.json(result)
     })
 
+    // get api for specific user
+    app.get('/users/:email', async(req,res)=>{
+      const email = req.params.email;
+      const query = {email: email};
+      const user = await usersCollection.findOne(email);
+      let isAdmin = false;
+      if(user?.role === 'admin'){
+        isAdmin(true)
+      }
+      res.json({admin: isAdmin})
+    })
+
   } finally {
     // await client.close();
   }
