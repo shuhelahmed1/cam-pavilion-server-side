@@ -33,10 +33,7 @@ async function run() {
     app.get('/products', async(req,res)=>{
       const cursor = productsCollection.find({});
       const products = await cursor.toArray();
-     
-      res.send({
-  
-        products})
+      res.send(products)
     })
 
     // get api particular product id
