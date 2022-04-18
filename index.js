@@ -1,8 +1,20 @@
 const express = require('express');
 const cors = require('cors');
+var admin = require("firebase-admin");
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
+
+// firebase admin initiazition
+
+
+var serviceAccount = require('./cam-pavilion-firebase-adminsdk-efruf-a6a137de66.json');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+// middleware
 app.use(cors());
 app.use(express.json());
 
@@ -11,6 +23,21 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.oesrn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+async function verifyToken(req, res, next){
+  if(req.headers?.authorization?.startsWith('Bearer ')){
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+    try{
+      const decodedUser = await admin.auth().verifyIdToken(idToken);
+      req.decodedUserEmail = decodedUser.email;
+    }
+    catch{
+
+    }
+  }
+  next();
+}
+
 async function run() {
   try {
     await client.connect();
@@ -75,7 +102,7 @@ async function run() {
                                // ORDER API'S
 
     // post api for orders
-    app.post('/orders', async(req,res)=>{
+    app.post('/orders', verifyToken, async(req,res)=>{
       const newOrder= req.body;
       const result = await ordersCollection.insertOne(newOrder);
       res.send(result)
@@ -84,14 +111,15 @@ async function run() {
 
     // get api for orders
     app.get('/orders', async(req,res)=>{
-      let query = {};
       const email = req.query.email;
-      if(email){
-        query = {email: email}
+      if(req.decodedUserEmail === email){
+        const  query = {email: email}
+        const cursor = ordersCollection.find(query);
+        const result = await cursor.toArray();
+        res.send(result)
+      }else{
+        res.status(401).json({message: 'user  not authorized'})
       }
-      const cursor = ordersCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result)
     })
 
     // delete api for orders
