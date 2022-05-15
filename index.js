@@ -99,8 +99,6 @@ async function run() {
       res.send(result)
     })
 
-    
-
                                // ORDER API'S
 
     // post api for orders
@@ -108,6 +106,7 @@ async function run() {
       const newOrder= req.body;
       const result = await ordersCollection.insertOne(newOrder);
       res.send(result)
+      console.log('order placed')
     })
 
     // get api for orders
@@ -186,4 +185,3 @@ app.get('/', (req,res)=>{
 app.listen(port, ()=>{
     console.log('running server on port', port)
 })
-
