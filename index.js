@@ -99,6 +99,14 @@ async function run() {
       res.send(result)
     })
 
+    // delete api for reviews
+    app.delete('/review/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await reviewCollection.deleteOne(query)
+      res.json(result)
+    })
+
                                // ORDER API'S
 
     // post api for orders
@@ -106,7 +114,6 @@ async function run() {
       const newOrder= req.body;
       const result = await ordersCollection.insertOne(newOrder);
       res.send(result)
-      console.log('order placed')
     })
 
     // get api for orders
