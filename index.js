@@ -99,8 +99,6 @@ async function run() {
       res.send(result)
     })
 
-    
-
                                // ORDER API'S
 
     // post api for orders
@@ -186,4 +184,3 @@ app.get('/', (req,res)=>{
 app.listen(port, ()=>{
     console.log('running server on port', port)
 })
-
