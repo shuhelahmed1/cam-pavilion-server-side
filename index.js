@@ -115,6 +115,7 @@ async function run() {
     // post api for orders
     app.post('/orders', verifyToken, async(req,res)=>{
       const newOrder= req.body;
+      newOrder.orderedAt = new Date();
       const result = await ordersCollection.insertOne(newOrder);
       res.send(result)
     })
