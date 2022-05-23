@@ -129,7 +129,7 @@ async function run() {
         const  query = {email: email}
         const cursor = ordersCollection.find(query);
         const result = await cursor.toArray();
-        res.send(result)
+        res.json(result)
       }else{
         res.status(401).json({message: 'user  not authorized'})
       }
