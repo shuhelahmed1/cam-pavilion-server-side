@@ -122,6 +122,7 @@ async function run() {
 
     // get api for orders
     app.get('/orders', async(req,res)=>{
+      console.log(req.headers)
       const email = req.query.email;
       if(req.decodedUserEmail === email){
         const  query = {email: email}
