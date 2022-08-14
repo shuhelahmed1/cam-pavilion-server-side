@@ -1,14 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-var admin = require("firebase-admin");
+const admin = require("firebase-admin");
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
 
 // firebase admin initiazition
 
-
-var serviceAccount = require('./cam-pavilion-firebase-adminsdk-efruf-a6a137de66.json');
+const serviceAccount = require('./cam-pavilion-firebase-adminsdk-efruf-a6a137de66.json');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -38,7 +37,6 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function verifyToken(req, res, next){
   if(req.headers?.authorization?.startsWith('Bearer ')){
     const idToken = req.headers.authorization.split('Bearer ')[1];
-    console.log('inside separate function', idToken)
     try{
       const decodedUser = await admin.auth().verifyIdToken(idToken);
       req.decodedUserEmail = decodedUser.email;
@@ -114,7 +112,7 @@ async function run() {
                                // ORDER API'S
 
     // post api for orders
-    app.post('/orders', verifyToken, async(req,res)=>{
+    app.post('/orders', async(req,res)=>{
       const newOrder= req.body;
       newOrder.orderedAt = new Date();
       const result = await ordersCollection.insertOne(newOrder);
@@ -122,8 +120,7 @@ async function run() {
     })
 
     // get api for orders
-    app.get('/orders', async(req,res)=>{
-      console.log(req.headers)
+    app.get('/orders', verifyToken, async(req,res)=>{
       const email = req.query.email;
       if(req.decodedUserEmail === email){
         const  query = {email: email}
