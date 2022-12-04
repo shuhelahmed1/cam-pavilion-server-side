@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 5000;
+const fileUpload = require('express-fileupload')
 
 // firebase admin initiazition
 
@@ -22,6 +23,8 @@ const corsConfig = {
 app.use(cors(corsConfig))
 app.options("*", cors(corsConfig))
 app.use(express.json())
+app.use(fileUpload())
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,authorization")
@@ -61,9 +64,19 @@ async function run() {
 
     // post api for products
     app.post('/products', async(req,res)=>{
-      const newProduct = req.body;
-      const result = await productsCollection.insertOne(newProduct);
-      res.send(result)
+      const name = req.body.name;
+      const des = req.body.des;
+      const pic = req.files.image;
+      const picData = pic.data;
+      const encodedPic = picData.toString('base64')
+      const imageBuffer = Buffer.from(encodedPic, 'base64')
+      const product = {
+        name,
+        des,
+        image: imageBuffer
+      }
+      const result = await productsCollection.insertOne(product)
+      res.json(result)
     })
 
     // get api for products
