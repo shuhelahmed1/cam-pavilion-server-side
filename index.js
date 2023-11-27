@@ -8,11 +8,11 @@ const fileUpload = require('express-fileupload')
 
 // firebase admin initiazition
 
-// const serviceAccount = require('./cam-pavilion-firebase-adminsdk-efruf-a6a137de66.json');
+const serviceAccount = require('./cam-pavilion-firebase-adminsdk-efruf-a6a137de66.json');
 
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 
 app.use(cors())
 app.use(express.json())
@@ -30,19 +30,19 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-// async function verifyToken(req, res, next){
-//   if(req.headers?.authorization?.startsWith('Bearer ')){
-//     const idToken = req.headers.authorization.split('Bearer ')[1];
-//     try{
-//       const decodedUser = await admin.auth().verifyIdToken(idToken);
-//       req.decodedUserEmail = decodedUser.email;
-//     }
-//     catch{
+async function verifyToken(req, res, next){
+  if(req.headers?.authorization?.startsWith('Bearer ')){
+    const idToken = req.headers.authorization.split('Bearer ')[1];
+    try{
+      const decodedUser = await admin.auth().verifyIdToken(idToken);
+      req.decodedUserEmail = decodedUser.email;
+    }
+    catch{
 
-//     }
-//   }
-//   next();
-// }
+    }
+  }
+  next();
+}
 
 async function run() {
   try {
