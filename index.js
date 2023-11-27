@@ -95,7 +95,7 @@ async function run() {
       const id = req.params.id;
       const query = {_id: ObjectId(id)}
       const result = await productsCollection.findOne(query)
-      res.send(result)
+      res.json(result)
     })
 
                                   // REVIEW API'S
@@ -104,14 +104,14 @@ async function run() {
     app.post('/review', async(req,res)=>{
       const newReview= req.body;
       const result = await reviewCollection.insertOne(newReview);
-      res.send(result)
+      res.json(result)
     })
 
      // get api for review
      app.get('/review', async(req,res)=>{
       const cursor = reviewCollection.find({});
       const result = await cursor.toArray();
-      res.send(result)
+      res.json(result)
     })
 
                                // ORDER API'S
@@ -121,7 +121,7 @@ async function run() {
       const newOrder= req.body;
       newOrder.orderedAt = new Date();
       const result = await ordersCollection.insertOne(newOrder);
-      res.send(result)
+      res.json(result)
     })
 
     // get api for orders
