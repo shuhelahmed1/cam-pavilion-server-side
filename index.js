@@ -14,15 +14,15 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-app.use(cors())
-app.use(express.json())
 app.use(fileUpload())
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,authorization")
-  next()
-})
+app.use(
+  cors({
+  origin:true,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  })
+  );
+  app.use(express.json())
 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
